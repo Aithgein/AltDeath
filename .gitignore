@@ -1,0 +1,6 @@
+.vs/
+.vscode/
+build/
+package/
+lib/commonlibsse/
+*.zip
