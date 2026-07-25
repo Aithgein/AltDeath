@@ -3,7 +3,7 @@ set_xmakever("3.0.0")
 includes("lib/commonlibsse")
 
 set_project("shades-respawn-addon")
-set_version("0.1.0")
+set_version("0.1.1")
 set_license("MIT")
 
 set_languages("c++23")

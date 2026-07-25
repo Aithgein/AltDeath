@@ -69,4 +69,4 @@ The log is written to the normal SKSE plugin log directory as `shades-respawn-ad
 
 ## Current status
 
-This is a first-pass source implementation. It has been structured for GitHub Actions, but it has not yet been compiled or tested inside Skyrim in this environment. The first Action run will expose any CommonLib API drift immediately; runtime behavior still needs in-game testing.
+Version 0.1.1 updates the logging calls for the current CommonLibSSE build. Runtime behavior still needs in-game testing.
