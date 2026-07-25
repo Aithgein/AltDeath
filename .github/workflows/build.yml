@@ -34,6 +34,15 @@ jobs:
             -Uri "https://raw.githubusercontent.com/Thiago099/SKSE-Menu-Framework-2-Example/main/include/SKSEMenuFramework.h" `
             -OutFile "src/SKSEMenuFramework.h"
 
+          # The framework header assumes a Unicode build and passes a wide
+          # string through the GetModuleHandle macro. This project does not
+          # define UNICODE, so make the intended Windows API explicit.
+          $header = Get-Content "src/SKSEMenuFramework.h" -Raw
+          $header = $header.Replace(
+            'GetModuleHandle(L"SKSEMenuFramework")',
+            'GetModuleHandleW(L"SKSEMenuFramework")')
+          Set-Content "src/SKSEMenuFramework.h" -Value $header -NoNewline
+
       - name: Set up XMake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
