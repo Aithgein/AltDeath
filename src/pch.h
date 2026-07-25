@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/M/Misc.h"
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
