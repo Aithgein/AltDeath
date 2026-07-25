@@ -1,51 +1,31 @@
-#pragma once
+set_xmakever("3.0.0")
 
-class CheckpointManager final
-{
-public:
-    static CheckpointManager& GetSingleton();
+includes("lib/commonlibsse")
 
-    void InitializeForms();
-    void CaptureCheckpoint();
+set_project("shades-respawn-addon")
+set_version("0.2.0")
+set_license("MIT")
 
-    // Called when an exact Shades resurrection effect event is observed.
-    void TriggerShadesResurrection();
+set_languages("c++23")
+set_warnings("allextra")
+set_policy("package.requires_lock", true)
 
-    // Called after events that may precede or follow the Shades ethereal effect.
-    // The actual check is deferred to the game thread.
-    void QueueShadesStateCheck();
+add_rules("mode.debug", "mode.releasedbg")
+add_rules("plugin.vsxmake.autoupdate")
+set_defaultmode("releasedbg")
 
-    void Save(SKSE::SerializationInterface* a_intfc);
-    void Load(SKSE::SerializationInterface* a_intfc);
-    void Revert();
+set_config("commonlib_toml", false)
 
-    [[nodiscard]] RE::EffectSetting* GetShadesEtherealEffect() const noexcept;
-    [[nodiscard]] RE::SpellItem* GetShadesEtherealSpell() const noexcept;
+target("shades-respawn-addon")
+    add_deps("commonlibsse")
 
-private:
-    CheckpointManager() = default;
+    add_rules("commonlibsse.plugin", {
+        name = "shades-respawn-addon",
+        author = "Shades Respawn Addon contributors",
+        description = "Teleports the player to the last successful sleep or wait location after Shades of Mortality resurrects them"
+    })
 
-    [[nodiscard]] RE::TESObjectREFR* ResolveMarker() const;
-    [[nodiscard]] bool IsShadesEtherealActive() const;
-
-    void QueueTeleport();
-    void TeleportNow();
-
-    static constexpr std::string_view kShadesPlugin = "shade-of-mortality.esp";
-    static constexpr RE::FormID kShadesEtherealEffectLocalID = 0x800;
-    static constexpr RE::FormID kShadesEtherealSpellLocalID = 0x801;
-
-    // XMarker in Skyrim.esm. It is invisible and suitable as a MoveTo target.
-    static constexpr std::string_view kSkyrimPlugin = "Skyrim.esm";
-    static constexpr RE::FormID kXMarkerLocalID = 0x3B;
-
-    mutable std::mutex _lock;
-    RE::FormID _markerFormID{ 0 };
-    RE::TESBoundObject* _xMarkerBase{ nullptr };
-    RE::EffectSetting* _shadesEtherealEffect{ nullptr };
-    RE::SpellItem* _shadesEtherealSpell{ nullptr };
-
-    std::atomic_bool _teleportPending{ false };
-    std::atomic_bool _stateCheckPending{ false };
-    std::atomic_bool _resurrectionLatched{ false };
-};
+    add_files("src/**.cpp")
+    add_headerfiles("src/**.h")
+    add_includedirs("src")
+    set_pcxxheader("src/pch.h")
