@@ -27,6 +27,13 @@ jobs:
         run: |
           git clone --recursive --depth 1 https://github.com/libxse/commonlibsse.git lib/commonlibsse
 
+      - name: Fetch SKSE Menu Framework header
+        shell: pwsh
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://raw.githubusercontent.com/Thiago099/SKSE-Menu-Framework-2-Example/main/include/SKSEMenuFramework.h" `
+            -OutFile "src/SKSEMenuFramework.h"
+
       - name: Set up XMake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
