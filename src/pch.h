@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RE/M/Misc.h"
 #include "RE/Skyrim.h"
+#include "RE/M/Misc.h"
 #include "SKSE/SKSE.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
