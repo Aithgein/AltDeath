@@ -1,72 +1,79 @@
 # Shades Respawn Addon
 
-A standalone SKSE/CommonLibSSE-NG addon for **Shades of Mortality**.
+A small SKSE addon for **Shades of Mortality** that lets you choose where you return after death.
 
-It does exactly three things:
+Open **SKSE Menu Framework**, stand where you want to respawn, and select **Set Current Location**. From then on, whenever Shades of Mortality resurrects you, this addon moves you back to that location.
 
-1. After a successful sleep, it records the player's location.
-2. After a successful wait, it records the player's location.
-3. When Shades applies its player ethereal effect during resurrection, it moves the player to that recorded location on the next game-thread update.
-
-It does not subscribe to Resurrection API, replace Shades' DLL, add an ESP/ESL, use Papyrus, calm enemies, heal enemies, clear combat, fade the screen, or add configuration menus.
+Shades still handles the death itself, including health restoration, injuries, gold loss, and any other options you have enabled. This addon only handles the relocation.
 
 ## Requirements
 
-- Skyrim Special Edition/Anniversary Edition supported by the current CommonLibSSE-NG build
-- SKSE
-- Address Library as required by CommonLibSSE-NG
-- Resurrection API
-- Shades of Mortality
+* Skyrim Script Extender (SKSE)
+* Address Library for SKSE Plugins
+* Shades of Mortality
+* SKSE Menu Framework
 
-## Shades settings
+## Installation
 
-Disable Shades' calming in `Data/SKSE/Plugins/shades_custom.toml`:
+Install the mod normally through Mod Organizer 2, Vortex, or another mod manager. The DLL should end up at:
+
+```text
+Data/SKSE/Plugins/shades-respawn-addon.dll
+```
+
+This mod has no ESP or ESL and does not need a load-order position.
+
+For the intended behavior, disable Shades of Mortality’s enemy-calming effect in:
+
+```text
+Data/SKSE/Plugins/shades_custom.toml
+```
+
+Set:
 
 ```toml
 [Settings]
 bToggleCalmSpell = false
 ```
 
-Shades' existing `HealAndCalmEnemiesOnDeath` function also controls enemy healing and optional cell resurrection. To leave defeated enemies entirely untouched, use:
+## Use
 
-```toml
-[Settings]
-bToggleCalmSpell = false
-fHealEnemiesArea = 0.0
-bResurrectEnemiesInCell = false
+1. Stand at the location where you want to return after death.
+2. Open SKSE Menu Framework.
+3. Select **Shades Respawn Addon**.
+4. Select **Respawn Location**.
+5. Press **Set Current Location**.
+
+The message **“You are bound.”** confirms that the location was saved.
+
+The bound location remains in effect until you replace it with another one. Sleeping and waiting do not change it.
+
+If Shades resurrects you before you have chosen a location, the addon displays **“You are not bound.”** and leaves you where Shades revived you.
+
+## What the Mod Does
+
+* Adds one button to SKSE Menu Framework for marking your current position.
+* Saves that position with your game.
+* Detects when Shades of Mortality resurrects the player.
+* Moves the player to the saved position.
+
+It uses no Papyrus scripts and adds no plugin file.
+
+## Compatibility
+
+This addon is made specifically for Shades of Mortality. It identifies Shades’ resurrection through the ethereal effect applied during its death sequence. If a future Shades update changes that effect or renames its plugin, this addon may need an update.
+
+## Building from Source
+
+The repository includes a GitHub Actions workflow. Open the repository’s **Actions** tab, select **Build**, and run the workflow. The completed run produces a mod-manager-ready ZIP under **Artifacts**.
+
+The project can also be built locally with XMake:
+
+```powershell
+xmake f -m releasedbg -y
+xmake -y
 ```
 
-## Build with GitHub Actions
+## License
 
-1. Create an empty GitHub repository.
-2. Upload the contents of this folder to its `main` branch.
-3. Open **Actions** → **Build** → **Run workflow**.
-4. Open the completed run and download the `Shades-Respawn-Addon` artifact.
-5. Install `Shades-Respawn-Addon.zip` with MO2 after the requirements.
-
-The workflow fetches CommonLibSSE-NG, builds the DLL, and creates an MO2-ready ZIP.
-
-## Behavior
-
-- The checkpoint updates only after a non-interrupted sleep or wait.
-- Sleeping or waiting again replaces the previous checkpoint.
-- Dying before the first successful sleep/wait leaves Shades' ordinary resurrection behavior unchanged, minus whatever Shades options you disabled.
-- The addon recognizes Shades by the player ethereal magic effect at local FormID `0x800` in `shade-of-mortality.esp`.
-- The checkpoint uses a persistent runtime XMarker and stores its FormID in the SKSE cosave.
-
-## Testing checklist
-
-Test on a disposable save first:
-
-- sleep indoors → die outdoors
-- wait outdoors → die indoors
-- save/reload after setting a checkpoint → die
-- set a second checkpoint → confirm it replaces the first
-- die before setting any checkpoint
-- die twice in quick succession
-
-The log is written to the normal SKSE plugin log directory as `shades-respawn-addon.log`.
-
-## Current status
-
-Version 0.1.1 updates the logging calls for the current CommonLibSSE build. Runtime behavior still needs in-game testing.
+MIT
